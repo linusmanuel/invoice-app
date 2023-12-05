@@ -3,6 +3,7 @@
 import { onMounted, ref } from "vue";
 
     let invoices = ref([]);
+    let searchInvoice = ref([]);
 
     onMounted(async () => {
         getInvoices()
@@ -12,11 +13,17 @@ import { onMounted, ref } from "vue";
         try {
             let response = await axios.get('/api/get_all_invoice');
             invoices.value = response.data.invoices;
-            console.log('response', response)
         } catch (error) {
             console.error('Erro ao buscar faturas', error);
         }
     };
+
+    const search = async () => {
+        let url = `/api/search_invoice?s=${searchInvoice.value}`
+        let response = await axios.get(url)
+        console.log('response', response.data.invoices);
+        invoices.value = response.data.invoices;
+    }
 </script>
 
 <template>
@@ -63,7 +70,9 @@ import { onMounted, ref } from "vue";
                     </div>
                     <div class="relative">
                         <i class="table--search--input--icon fas fa-search "></i>
-                        <input class="table--search--input" type="text" placeholder="Search invoice">
+                        <input class="table--search--input" type="text" placeholder="Search invoice"
+                        v-model="searchInvoice" @keyup="search()"
+                        >
                     </div>
                 </div>
 
@@ -77,7 +86,7 @@ import { onMounted, ref } from "vue";
                 </div>
 
                 <!-- item 1 -->
-                <div class="table--items" v-for="item in invoices" :key="item.id" v-if="invoices.length > 0">
+                <div class="table--items" v-if="invoices.length > 0" v-for="item in invoices" :key="item.id">
                     <a href="#" class="table--items--transactionId">#{{ item.id }}</a>
                     <p>{{item.date}}</p>
                     <p>#{{ item.number }}</p>
