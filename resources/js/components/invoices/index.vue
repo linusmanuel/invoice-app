@@ -20,9 +20,14 @@ import { onMounted, ref } from "vue";
 
     const search = async () => {
         let url = `/api/search_invoice?s=${searchInvoice.value}`
-        let response = await axios.get(url)
+        let response = await axios.get('/api/search_invoice?s=' + searchInvoice.value);
         console.log('response', response.data.invoices);
         invoices.value = response.data.invoices;
+    }
+
+    const newInvoice = async () => {
+        let form = await axios.get("/api/create_invoice");
+        console.log('form', form.data);
     }
 </script>
 
@@ -35,7 +40,7 @@ import { onMounted, ref } from "vue";
                     <h2 class="invoice__title">Invoices</h2>
                 </div>
                 <div>
-                    <a class="btn btn-secondary">
+                    <a class="btn btn-secondary" v-on:click="newInvoice">
                         New Invoice
                     </a>
                 </div>
